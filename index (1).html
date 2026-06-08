@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diario Cardioprotector · Nora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --oliva:#5C6B3A; --terracota:#B8633E; --arena:#F5EDE0;
+    --oliva-claro:#7A8A52; --tinta:#2B2A26; --linea:#D9CFBE;
+    --verde-ok:#5C6B3A; --rojo-aviso:#B8633E;
+    --blanco:#FCF9F3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Source Sans 3',sans-serif;
+    background:var(--arena);
+    color:var(--tinta);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;line-height:1.1}
+  header{
+    background:var(--oliva);
+    color:var(--arena);
+    padding:2.2rem 1.5rem 1.6rem;
+    border-bottom:5px solid var(--terracota);
+  }
+  header .wrap{max-width:1000px;margin:0 auto}
+  header h1{font-size:2.3rem;letter-spacing:-.5px}
+  header p{opacity:.85;margin-top:.3rem;font-weight:300}
+  nav{
+    background:var(--blanco);
+    border-bottom:1px solid var(--linea);
+    position:sticky;top:0;z-index:20;
+  }
+  nav .wrap{max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:.2rem;padding:.4rem .8rem}
+  nav button{
+    background:none;border:none;cursor:pointer;
+    font-family:'Source Sans 3',sans-serif;font-size:.95rem;font-weight:600;
+    color:var(--tinta);padding:.7rem .9rem;border-radius:8px;
+    transition:.15s;
+  }
+  nav button:hover{background:var(--arena)}
+  nav button.activo{background:var(--oliva);color:var(--arena)}
+  main{max-width:1000px;margin:0 auto;padding:1.8rem 1.2rem 4rem}
+  .panel{display:none;animation:aparece .3s ease}
+  .panel.activo{display:block}
+  @keyframes aparece{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .tarjeta{
+    background:var(--blanco);border:1px solid var(--linea);
+    border-radius:14px;padding:1.4rem 1.5rem;margin-bottom:1.3rem;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .tarjeta h2{font-size:1.5rem;color:var(--oliva);margin-bottom:.2rem}
+  .tarjeta h3{font-size:1.15rem;color:var(--terracota);margin:1.1rem 0 .5rem}
+  .sub{color:#7a7568;font-size:.9rem;margin-bottom:1rem}
+  label{display:block;font-weight:600;font-size:.9rem;margin:.7rem 0 .25rem}
+  input[type=text],input[type=date],textarea{
+    width:100%;padding:.6rem .7rem;border:1px solid var(--linea);
+    border-radius:8px;font-family:inherit;font-size:.95rem;background:#fff;
+  }
+  textarea{resize:vertical;min-height:48px}
+  input:focus,textarea:focus{outline:2px solid var(--oliva-claro);border-color:transparent}
+  .fila{display:flex;gap:1rem;flex-wrap:wrap}
+  .fila>div{flex:1;min-width:180px}
+  .contador-agua{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-top:.4rem}
+  .vaso{width:30px;height:38px;border:2px solid var(--oliva);border-radius:0 0 8px 8px;
+    cursor:pointer;transition:.15s;background:transparent}
+  .vaso.lleno{background:var(--oliva-claro);border-color:var(--oliva-claro)}
+  .num-agua{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--oliva)}
+  .check-sintoma{display:flex;align-items:center;gap:.6rem;margin-top:.5rem;font-weight:600}
+  .check-sintoma input{width:20px;height:20px;accent-color:var(--terracota)}
+  button.accion{
+    background:var(--terracota);color:#fff;border:none;cursor:pointer;
+    padding:.7rem 1.4rem;border-radius:9px;font-family:inherit;font-weight:700;
+    font-size:.95rem;margin-top:1.2rem;transition:.15s;
+  }
+  button.accion:hover{filter:brightness(1.07)}
+  button.sec{background:transparent;color:var(--oliva);border:1.5px solid var(--oliva)}
+  .resultado{margin-top:1.2rem;padding:1rem 1.1rem;border-radius:10px;border-left:5px solid}
+  .res-ok{background:#eef0e6;border-color:var(--verde-ok)}
+  .res-bajo{background:#f7 e6df;border-color:var(--terracota)}
+  .badge{display:inline-block;padding:.15rem .6rem;border-radius:20px;font-size:.78rem;
+    font-weight:700;margin-right:.4rem}
+  .b-ok{background:var(--oliva);color:#fff}
+  .b-bajo{background:var(--terracota);color:#fff}
+  table{width:100%;border-collapse:collapse;margin-top:.6rem;font-size:.9rem}
+  th,td{text-align:left;padding:.55rem .5rem;border-bottom:1px solid var(--linea);vertical-align:top}
+  th{color:var(--oliva);font-weight:700}
+  .dia-menu td:first-child{font-weight:700;color:var(--terracota);white-space:nowrap}
+  .aviso{background:#f3ecdd;border:1px dashed var(--terracota);border-radius:10px;
+    padding:.9rem 1.1rem;font-size:.88rem;margin-bottom:1.3rem;color:#6b5a45}
+  .lista-registros{margin-top:1rem}
+  .reg-item{border:1px solid var(--linea);border-radius:10px;padding:.8rem 1rem;margin-bottom:.6rem;background:#fff}
+  .reg-item .fecha{font-weight:700;color:var(--oliva)}
+  .reg-item small{color:#7a7568}
+  pre#informe{white-space:pre-wrap;font-family:'Source Sans 3',monospace;
+    background:#fff;border:1px solid var(--linea);border-radius:10px;padding:1.2rem;
+    font-size:.86rem;line-height:1.5}
+  .datos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin-top:.6rem}
+  .dato{background:var(--arena);border-radius:10px;padding:.8rem;text-align:center}
+  .dato .v{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--oliva)}
+  .dato .alto{color:var(--terracota)}
+  .dato .et{font-size:.78rem;color:#7a7568}
+  .barra{height:10px;background:var(--linea);border-radius:6px;overflow:hidden;margin-top:.3rem}
+  .barra i{display:block;height:100%;background:var(--oliva-claro);transition:.4s}
+  footer{text-align:center;color:#9a9385;font-size:.8rem;padding:2rem 1rem;border-top:1px solid var(--linea)}
+  /* recetas */
+  .enlace-rec{color:var(--terracota);text-decoration:underline dotted;cursor:pointer;font-weight:600}
+  .enlace-rec:hover{color:var(--oliva)}
+  .chip{background:var(--arena);border:1.5px solid var(--linea);border-radius:20px;padding:.35rem .9rem;
+    cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:600;color:var(--tinta);transition:.15s}
+  .chip:hover{border-color:var(--oliva)}
+  .chip.on{background:var(--oliva);color:#fff;border-color:var(--oliva)}
+  .grupo-filtro{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-bottom:.6rem}
+  .lbl-filtro{font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;color:#9a9385;font-weight:700;margin-right:.2rem;width:100%}
+  .receta-card{border:1px solid var(--linea);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.8rem;background:#fff;cursor:pointer;transition:.15s}
+  .receta-card:hover{border-color:var(--terracota);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .receta-card .ing{font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--terracota);font-weight:700}
+  .receta-card h4{font-family:'DM Serif Display',serif;font-weight:400;font-size:1.25rem;color:var(--oliva);margin:.15rem 0}
+  .receta-card .meta{font-size:.82rem;color:#7a7568}
+  .modal-fondo{display:none;position:fixed;inset:0;background:rgba(43,42,38,.55);z-index:50;
+    align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+  .modal-fondo.abierto{display:flex}
+  .modal-caja{background:var(--blanco);border-radius:16px;max-width:620px;width:100%;
+    padding:1.8rem 1.9rem;border-top:6px solid var(--terracota);animation:aparece .25s}
+  .modal-caja h3{font-size:1.7rem;color:var(--oliva);margin-bottom:.1rem}
+  .modal-caja .cerrar{float:right;background:none;border:none;font-size:1.6rem;cursor:pointer;color:#9a9385;line-height:1}
+  .ficha-bloque{margin-top:1.1rem}
+  .ficha-bloque .tit{font-weight:700;color:var(--terracota);font-size:.92rem;margin-bottom:.3rem}
+  .ficha-bloque ol,.ficha-bloque ul{margin-left:1.2rem}
+  .ficha-bloque li{margin-bottom:.3rem;font-size:.93rem}
+  .beneficio{background:#eef0e6;border-left:5px solid var(--oliva);border-radius:8px;padding:.8rem 1rem;
+    margin-top:1.1rem;font-size:.9rem}
+  .beneficio b{color:var(--oliva)}
+  /* portfolio / método */
+  .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-top:1rem}
+  .pf-card{border:1px solid var(--linea);border-radius:12px;padding:1rem;background:#fff;border-top:4px solid var(--oliva)}
+  .pf-card h4{font-family:'DM Serif Display',serif;font-weight:400;font-size:1.2rem;color:var(--oliva);margin-bottom:.2rem}
+  .pf-card .obj{display:inline-block;background:var(--arena);border-radius:6px;padding:.2rem .6rem;font-size:.8rem;font-weight:700;color:var(--terracota);margin:.3rem 0}
+  .pf-card p{font-size:.86rem;color:#5a5446}
+  .mito{background:#f7e6df;border-left:5px solid var(--terracota);border-radius:8px;padding:.85rem 1rem;margin-top:.7rem;font-size:.9rem}
+  .mito b{color:var(--terracota)}
+  ul.fuentes{margin-left:1.1rem;margin-top:.3rem}
+  ul.fuentes li{margin-bottom:.5rem;font-size:.92rem}
+  /* panel de fase */
+  .panel-fase{background:var(--oliva);color:var(--arena);border-radius:14px;padding:1.2rem 1.4rem;margin-bottom:1.3rem;
+    border-left:6px solid var(--terracota)}
+  .panel-fase .ahora{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;opacity:.8}
+  .panel-fase .franja{font-family:'DM Serif Display',serif;font-size:1.9rem;line-height:1.1;margin:.15rem 0}
+  .panel-fase .sig{font-size:.92rem;opacity:.92;margin-top:.2rem}
+  .panel-fase .cuenta{margin-top:.9rem;background:rgba(245,237,224,.15);border-radius:10px;padding:.7rem .9rem;font-size:.95rem}
+  .panel-fase .cuenta b{font-family:'DM Serif Display',serif;font-size:1.3rem}
+  .panel-fase.alerta{border-left-color:#E8B84B}
+  .panel-fase.pasada{border-left-color:#d99}
+  .panel-fase .reloj{float:right;font-size:1.1rem;font-weight:700;opacity:.9}
+  .panel-fase .previsto{margin-top:.6rem;font-size:.9rem;opacity:.95;font-style:italic}
+  /* barra de situación del día */
+  .barra-dia{background:var(--blanco);border:1px solid var(--linea);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.3rem}
+  .barra-dia .titulo-bd{font-size:.74rem;text-transform:uppercase;letter-spacing:1px;color:#9a9385;font-weight:700;margin-bottom:.7rem}
+  .bd-comidas{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.9rem}
+  .bd-chip{display:flex;align-items:center;gap:.35rem;border:1.5px solid var(--linea);border-radius:20px;
+    padding:.3rem .8rem;font-size:.82rem;font-weight:600;color:#9a9385}
+  .bd-chip.hecho{background:#eef0e6;border-color:var(--oliva);color:var(--oliva)}
+  .bd-chip .punto{width:9px;height:9px;border-radius:50%;background:var(--linea)}
+  .bd-chip.hecho .punto{background:var(--oliva)}
+  .bd-metricas{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.7rem}
+  .bd-metrica{background:var(--arena);border-radius:10px;padding:.6rem .7rem;text-align:center}
+  .bd-metrica .v{font-family:'DM Serif Display',serif;font-size:1.35rem;color:var(--oliva);line-height:1}
+  .bd-metrica .v.bajo{color:var(--terracota)}
+  .bd-metrica .et{font-size:.72rem;color:#7a7568;margin-top:.2rem}
+  .bd-vacio{font-size:.88rem;color:#9a9385;font-style:italic}
+  /* progreso */
+  .ventana{margin-top:1.1rem;padding:1rem 1.1rem;border-radius:10px;border-left:5px solid var(--oliva);background:#eef0e6;font-size:.92rem}
+  .ventana.pronto{border-left-color:#E8B84B;background:#f6efdc}
+  .ventana.listo{border-left-color:var(--terracota);background:#f7e6df}
+  .ventana b{color:var(--oliva)}
+  .ad-semana{border:1px solid var(--linea);border-radius:10px;padding:.9rem 1rem;margin-bottom:.8rem;background:#fff}
+  .ad-semana .cab{display:flex;justify-content:space-between;font-weight:700;color:var(--oliva);margin-bottom:.6rem;font-size:.92rem}
+  .ad-semana .cab small{color:#9a9385;font-weight:400}
+  .ad-fila{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem;font-size:.85rem}
+  .ad-fila .et{width:120px;color:#5a5446}
+  .ad-bar{flex:1;height:12px;background:var(--arena);border-radius:6px;overflow:hidden}
+  .ad-bar i{display:block;height:100%;background:var(--oliva-claro);border-radius:6px;transition:.4s}
+  .ad-fila .pct{width:42px;text-align:right;font-weight:700;color:var(--oliva)}
+  /* planificación */
+  .aviso-plan{background:#eef0e6;border-left:5px solid var(--oliva);border-radius:8px;padding:.7rem .9rem;
+    margin:.8rem 0;font-size:.88rem;color:#4a5230}
+  .aviso-plan b{color:var(--oliva)}
+  .acciones-plan{display:flex;gap:.5rem;flex-wrap:wrap;margin:.7rem 0 .3rem}
+  .accion.mini{margin-top:0;padding:.5rem 1rem;font-size:.85rem}
+  .plan-campo{margin-bottom:.9rem}
+  .plan-campo label{margin-bottom:.3rem}
+  .plan-campo select{width:100%;padding:.55rem;border:1px solid var(--linea);border-radius:8px;font-family:inherit;font-size:.9rem;background:#fff;margin-bottom:.35rem}
+  .plan-campo textarea{min-height:38px}
+  @media print{nav,header p,button,footer{display:none}.panel{display:block!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Diario Cardioprotector</h1>
+    <p>Seguimiento de dieta mediterránea, hidratación y síntomas · perfil personal</p>
+  </div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <button class="tab activo" data-t="registro">Registro diario</button>
+    <button class="tab" data-t="planificador">Planificador de dieta</button>
+    <button class="tab" data-t="metodo">Método y horarios</button>
+    <button class="tab" data-t="analisis">Análisis del día</button>
+    <button class="tab" data-t="informe">Informe lípidos</button>
+    <button class="tab" data-t="progreso">Mi progreso</button>
+    <button class="tab" data-t="datos">Mis datos / respaldo</button>
+    <button class="tab" data-t="fuentes">Fuentes</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ REGISTRO ============ -->
+<section class="panel activo" id="registro">
+  <div class="panel-fase" id="panel-fase"></div>
+  <div class="barra-dia" id="barra-dia"></div>
+  <div class="aviso">
+    Esta app organiza tu información para que llegues a la consulta con datos ordenados.
+    No sustituye el criterio de tu médico ni la pauta de la Unidad de Lípidos.
+  </div>
+  <div class="tarjeta">
+    <h2>Registro del día</h2>
+    <p class="sub">Anota lo que comes, o planifica antes y luego confirma. El análisis detecta ingredientes por palabras clave.</p>
+    <label>Fecha</label>
+    <input type="date" id="r-fecha" onchange="cambioFecha()">
+
+    <div id="aviso-plan" class="aviso-plan" style="display:none"></div>
+
+    <div class="acciones-plan">
+      <button class="accion sec mini" onclick="abrirPlanificar()">📋 Planificar este día</button>
+      <button class="accion sec mini" id="btn-comi-plan" style="display:none" onclick="comiSegunPlan()">✓ Comí lo previsto</button>
+    </div>
+
+    <div class="fila">
+      <div><label>Desayuno</label><textarea id="r-desayuno" placeholder="Ej: avena con manzana y nueces, té"></textarea></div>
+      <div><label>Almuerzo (media mañana)</label><textarea id="r-almuerzo" placeholder="Ej: yogur desnatado, fruta"></textarea></div>
+    </div>
+    <div class="fila">
+      <div><label>Comida</label><textarea id="r-comida" placeholder="Ej: lentejas con verduras, aceite de oliva"></textarea></div>
+      <div><label>Merienda</label><textarea id="r-merienda" placeholder="Ej: puñado de almendras"></textarea></div>
+    </div>
+    <label>Cena</label>
+    <textarea id="r-cena" placeholder="Ej: salmón al horno, ensalada con aguacate"></textarea>
+
+    <label class="check-sintoma" style="margin-top:.9rem"><input type="checkbox" id="r-cambios" onchange="toggleCambios()"> Hubo cambios respecto a lo que había planeado</label>
+    <textarea id="r-notacambio" placeholder="Ej: tenía previsto pescado, comí fuera con la familia" style="display:none;margin-top:.4rem"></textarea>
+
+    <h3>Hidratación</h3>
+    <p class="sub">Importante por la hipotensión: pulsa los vasos que has bebido.</p>
+    <div class="contador-agua" id="vasos"></div>
+    <span class="num-agua"><span id="agua-num">0</span> / 8 vasos</span>
+
+    <h3>Síntomas</h3>
+    <label class="check-sintoma"><input type="checkbox" id="r-mareo"> He tenido mareo al levantarme</label>
+    <label>Notas de síntomas / presión arterial (opcional)</label>
+    <input type="text" id="r-notas" placeholder="Ej: PA 95/60, mareo leve por la mañana">
+
+    <button class="accion" onclick="guardarRegistro()">Guardar registro</button>
+    <span id="r-msg" style="margin-left:1rem;color:var(--oliva);font-weight:600"></span>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Registros guardados</h2>
+    <div class="lista-registros" id="lista-registros"></div>
+  </div>
+</section>
+
+<!-- ============ PLANIFICADOR ============ -->
+<section class="panel" id="planificador">
+  <div class="tarjeta">
+    <h2>El método Portfolio</h2>
+    <p class="sub">Marco del Dr. David Jenkins (Universidad de Toronto). La idea: no fiarlo todo a
+      un alimento, sino sumar cada día cuatro grupos que bajan el LDL por vías distintas. En estudios
+      con buena adherencia, las reducciones de LDL fueron comparables a estatinas de primera generación.</p>
+    <div class="portfolio-grid" id="portfolio-grid"></div>
+    <p class="sub" style="margin-top:1rem;font-size:.82rem">
+      Objetivos orientativos de población general, no una prescripción para tu caso.
+      Las cifras de LDL y si necesitas fármaco las fija tu unidad de lípidos. Ver pestaña «Fuentes».</p>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Menú base semanal · Mediterránea avanzada</h2>
+    <p class="sub">Cada plato enlaza a su ficha de preparación. Pulsa un ingrediente
+      <span class="enlace-rec">subrayado</span> para ver la técnica óptima y su beneficio.</p>
+    <div style="overflow-x:auto"><table id="tabla-menu" class="dia-menu"></table></div>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Banco de recetas por ingrediente</h2>
+    <p class="sub">Filtra por ingrediente principal. Cada ficha prioriza la forma de preparación
+      que mejor conserva o activa el beneficio cardioprotector.</p>
+    <div id="filtros-recetas" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem"></div>
+    <div id="banco-recetas"></div>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Principios de la pauta</h2>
+    <table>
+      <tr><th>Prioriza</th><td>Avena, cebada, legumbres, manzana, cítricos, berenjena, AOVE en crudo, aguacate, nueces y almendras, pescado azul, verdura abundante.</td></tr>
+      <tr><th>Limita al máximo</th><td>Carnes grasas y procesadas, embutidos, lácteos enteros, mantequilla, bollería, fritos, ultraprocesados.</td></tr>
+      <tr><th>Hidratación</th><td>Reparte el agua a lo largo del día; añade sal con moderación solo si tu médico lo aprueba por la hipotensión.</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- Modal ficha de receta -->
+<div id="modal-receta" class="modal-fondo" onclick="if(event.target===this)cerrarFicha()">
+  <div class="modal-caja" id="modal-caja"></div>
+</div>
+
+<!-- Modal planificar día -->
+<div id="modal-plan" class="modal-fondo" onclick="if(event.target===this)cerrarPlan()">
+  <div class="modal-caja" id="modal-plan-caja"></div>
+</div>
+
+<!-- ============ ANÁLISIS ============ -->
+<section class="panel" id="analisis">
+  <div class="tarjeta">
+    <h2>Análisis del día</h2>
+    <p class="sub">Elige un registro guardado y comprueba si cumple la cuota de fibra soluble y grasas buenas.</p>
+    <label>Registro a analizar</label>
+    <select id="sel-analisis" style="width:100%;padding:.6rem;border:1px solid var(--linea);border-radius:8px;font-family:inherit"></select>
+    <button class="accion" onclick="analizarDia()">Analizar</button>
+    <div id="resultado-analisis"></div>
+  </div>
+</section>
+
+<!-- ============ INFORME ============ -->
+<section class="panel" id="informe">
+  <div class="tarjeta">
+    <h2>Informe para la Unidad de Lípidos</h2>
+    <p class="sub">Resumen ejecutivo con tus datos, hidratación y síntomas. Pulsa imprimir para llevarlo a consulta.</p>
+    <div class="fila">
+      <div><label>Desde</label><input type="date" id="inf-desde"></div>
+      <div><label>Hasta</label><input type="date" id="inf-hasta"></div>
+    </div>
+    <button class="accion" onclick="generarInforme()">Generar informe</button>
+    <button class="accion sec" onclick="window.print()">Imprimir</button>
+    <pre id="informe" style="margin-top:1.2rem">Pulsa «Generar informe» para crear el resumen.</pre>
+  </div>
+</section>
+
+<!-- ============ DATOS ============ -->
+<section class="panel" id="datos">
+  <div class="tarjeta">
+    <h2>Datos médicos de partida</h2>
+    <p class="sub">Edita aquí tus valores; se usan en el informe.</p>
+    <div class="datos-grid">
+      <div class="dato"><div class="v" id="d-edad">50</div><div class="et">años</div></div>
+      <div class="dato"><div class="v" id="d-peso">54</div><div class="et">kg</div></div>
+      <div class="dato"><div class="v alto" id="d-ct">282</div><div class="et">Colesterol total (mg/dL)</div></div>
+      <div class="dato"><div class="v alto" id="d-ldl">195</div><div class="et">LDL (mg/dL)</div></div>
+      <div class="dato"><div class="v" id="d-hdl">58</div><div class="et">HDL (mg/dL)</div></div>
+      <div class="dato"><div class="v" id="d-tg">143</div><div class="et">Triglicéridos (mg/dL)</div></div>
+    </div>
+    <h3>Editar valores</h3>
+    <div class="fila">
+      <div><label>Edad</label><input type="text" id="e-edad" value="50"></div>
+      <div><label>Peso (kg)</label><input type="text" id="e-peso" value="54"></div>
+    </div>
+    <div class="fila">
+      <div><label>Colesterol total</label><input type="text" id="e-ct" value="282"></div>
+      <div><label>LDL</label><input type="text" id="e-ldl" value="195"></div>
+    </div>
+    <div class="fila">
+      <div><label>HDL</label><input type="text" id="e-hdl" value="58"></div>
+      <div><label>Triglicéridos</label><input type="text" id="e-tg" value="143"></div>
+    </div>
+    <label>Tensión / observaciones</label>
+    <input type="text" id="e-pa" value="Hipotensión crónica, sin mareos habituales. Menopausia.">
+    <button class="accion" onclick="guardarDatos()">Guardar mis datos</button>
+    <span id="d-msg" style="margin-left:1rem;color:var(--oliva);font-weight:600"></span>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Mis horarios de comida</h2>
+    <p class="sub">Definen el panel de fase del día. La hora tope de cena es la clave: cenar pronto
+      ayuda con triglicéridos y tensión nocturna. Ajústalas a tu rutina real.</p>
+    <div class="fila">
+      <div><label>Desayuno</label><input type="time" id="h-desayuno"></div>
+      <div><label>Media mañana</label><input type="time" id="h-almuerzo"></div>
+      <div><label>Comida</label><input type="time" id="h-comida"></div>
+    </div>
+    <div class="fila">
+      <div><label>Merienda</label><input type="time" id="h-merienda"></div>
+      <div><label>Cena</label><input type="time" id="h-cena"></div>
+      <div><label>Hora tope de cena</label><input type="time" id="h-tope"></div>
+    </div>
+    <button class="accion" onclick="guardarHorarios()">Guardar horarios</button>
+    <span id="h-msg" style="margin-left:1rem;color:var(--oliva);font-weight:600"></span>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Respaldo de datos</h2>
+    <p class="sub">Todo se guarda en este navegador. Exporta un JSON para tener copia o moverlo a otro dispositivo.</p>
+    <button class="accion" onclick="exportar()">Exportar JSON</button>
+    <button class="accion sec" onclick="document.getElementById('imp').click()">Importar JSON</button>
+    <input type="file" id="imp" accept="application/json" style="display:none" onchange="importar(event)">
+    <button class="accion sec" onclick="borrarTodo()" style="border-color:var(--terracota);color:var(--terracota)">Borrar todo</button>
+  </div>
+</section>
+
+<!-- ============ MÉTODO Y HORARIOS ============ -->
+<section class="panel" id="metodo">
+  <div class="tarjeta">
+    <h2>¿Importa la hora a la que como?</h2>
+    <p class="sub">Respuesta honesta: para el LDL, casi nada. Lo que mueve tu colesterol es el conjunto
+      del día y la constancia. La hora sí afecta algo a los triglicéridos (los tuyos están en el límite
+      alto). Esto es lo que la evidencia respalda de verdad.</p>
+
+    <h3>Lo que sí tiene base</h3>
+    <table>
+      <tr><th>Desayuna</th><td>Saltarse el desayuno se asocia a colesterol total, LDL y triglicéridos más altos. Tu avena o kéfir por la mañana van bien.</td></tr>
+      <tr><th>Cena pronto y ligero</th><td>Cenar a las 18–19 h frente a las 22 h mejora el manejo de glucosa y triglicéridos. Evita comidas pesadas justo antes de dormir.</td></tr>
+      <tr><th>Carga la energía temprano</th><td>Concentrar más comida por la mañana/mediodía y menos por la noche favorece el perfil lipídico.</td></tr>
+      <tr><th>Regularidad</th><td>Comer a horas parecidas cada día ayuda más que cualquier "alimento a una hora exacta".</td></tr>
+      <tr><th>Reparte fibra y agua</th><td>Mejor fibra soluble en varias tomas que toda de golpe; el agua repartida es clave por tu hipotensión.</td></tr>
+    </table>
+
+    <h3>Mitos frecuentes (sin respaldo)</h3>
+    <div class="mito">
+      <b>"Aceite de oliva con limón en ayunas limpia el hígado / arrastra grasa".</b>
+      No. El AOVE es beneficioso por su tipo de grasa y polifenoles, lo tomes a la hora que lo tomes; no hay efecto "detox" por tomarlo en ayunas. Dos cucharadas son ~240 kcal: cuéntalas en el día.
+    </div>
+    <div class="mito">
+      <b>"Hay una hora mágica para cada alimento".</b>
+      Para el colesterol, no. El LDL apenas sigue el reloj; lo que cuenta es el total diario y repetirlo a diario.
+    </div>
+    <div class="mito">
+      <b>"La miel es un endulzante sano".</b>
+      Es azúcar libre. Con triglicéridos en el límite alto, mejor endulzar el kéfir con fruta (manzana rallada, frutos rojos) que con miel.
+    </div>
+    <p class="sub" style="margin-top:1rem;font-size:.82rem">
+      Campo emergente y mayormente observacional: principios generales sólidos, sin tabla horaria precisa. Ver «Fuentes».</p>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Tus desayunos, revisados</h2>
+    <table>
+      <tr><th>Avena</th><td>Bien. El beneficio viene de tomarla a diario, no de la hora. Repártela con la comida si quieres más fibra.</td></tr>
+      <tr><th>AOVE con limón en ayunas</th><td>No hace daño, pero no "limpia" nada. Si te gusta, adelante; cuenta las calorías. El beneficio del AOVE no depende del ayuno.</td></tr>
+      <tr><th>Kéfir con miel</th><td>El kéfir encaja (mejor desnatado). Cambia la miel por fruta para no subir triglicéridos.</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============ FUENTES ============ -->
+<section class="panel" id="fuentes">
+  <div class="tarjeta">
+    <h2>Fuentes y autores</h2>
+    <p class="sub">Referencias en las que se basa el método y los horarios de esta app.
+      Útiles para comentar con tu especialista.</p>
+
+    <h3>Método Portfolio (bajar LDL con dieta)</h3>
+    <ul class="fuentes">
+      <li><b>Dr. David J.A. Jenkins</b> — Universidad de Toronto. Creador del "Dietary Portfolio" (2003).
+        Ensayos de referencia: efectos del portfolio frente a lovastatina (JAMA/CMAJ).</li>
+      <li><b>The Portfolio Diet for Cardiovascular Disease Risk Reduction</b> — libro divulgativo del equipo Jenkins.</li>
+    </ul>
+
+    <h3>Fibra soluble y colesterol</h3>
+    <ul class="fuentes">
+      <li>Meta-análisis sobre psyllium y betaglucanos (avena, cebada) y su efecto sobre LDL — Anderson JW et al.; Brown et al.</li>
+      <li>Sociedad Española de Arteriosclerosis (SEA) — "Estándares para el Control Global del Riesgo Cardiovascular 2026" y documento sobre alimentos funcionales/nutracéuticos.</li>
+    </ul>
+
+    <h3>Horarios y ritmos (cronobiología nutricional)</h3>
+    <ul class="fuentes">
+      <li>Revisiones de "chrononutrition" y salud cardiometabólica (Frontiers in Nutrition, NCBI/PMC) — timing de comidas, cena tardía y triglicéridos.</li>
+      <li>Estudios sobre desayuno y perfil lipídico (revisión de Souza et al., 2021).</li>
+    </ul>
+
+    <h3>Cuánto y en cuánto tiempo baja el LDL</h3>
+    <ul class="fuentes">
+      <li>Ensayos del Portfolio (Jenkins, JAMA 2003): reducción de LDL de ~17% de media en meta-análisis, hasta 28-35% en condiciones controladas; comparable a estatina de dosis baja.</li>
+      <li>Línea temporal: cambios medibles en sangre a partir de 4-6 semanas; pico del efecto a 8-12 semanas. Por eso un análisis a los 7 días no refleja aún el esfuerzo.</li>
+    </ul>
+
+    <div class="aviso" style="margin-top:1.2rem">
+      Nota: parte de la evidencia sobre horarios es observacional y el campo está en desarrollo.
+      Esta app organiza información; no sustituye la valoración de tu unidad de lípidos.
+    </div>
+  </div>
+</section>
+
+<!-- ============ MI PROGRESO ============ -->
+<section class="panel" id="progreso">
+  <div class="tarjeta">
+    <h2>Mi progreso</h2>
+    <p class="sub">El objetivo no es un número rápido, es construir el hábito. Aquí ves tu constancia
+      semana a semana — que es lo que de verdad sostiene el cambio mientras el análisis aún no refleja nada.</p>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Cuándo medir en sangre</h2>
+    <p class="sub">El LDL no cambia en una semana: los primeros cambios medibles aparecen a las 4-6 semanas
+      y el efecto máximo hacia las 8-12. Marca tu fecha de inicio y la app te dirá cuándo tiene sentido el análisis.</p>
+    <div class="fila">
+      <div><label>Fecha en que empiezas el hábito</label><input type="date" id="seg-inicio"></div>
+    </div>
+    <button class="accion" onclick="guardarInicio()">Guardar fecha de inicio</button>
+    <span id="seg-msg" style="margin-left:1rem;color:var(--oliva);font-weight:600"></span>
+    <div id="ventana-analisis"></div>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Cifras de partida</h2>
+    <p class="sub">Tus valores de hoy, para comparar con el análisis futuro. Edítalos si tienes datos más recientes.</p>
+    <div class="fila">
+      <div><label>Colesterol total</label><input type="text" id="seg-ct"></div>
+      <div><label>LDL</label><input type="text" id="seg-ldl"></div>
+    </div>
+    <div class="fila">
+      <div><label>HDL</label><input type="text" id="seg-hdl"></div>
+      <div><label>Triglicéridos</label><input type="text" id="seg-tg"></div>
+    </div>
+    <button class="accion" onclick="guardarPartida()">Guardar cifras de partida</button>
+    <span id="part-msg" style="margin-left:1rem;color:var(--oliva);font-weight:600"></span>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Adherencia por semana</h2>
+    <p class="sub">% de días, en cada semana registrada, en que cumpliste cada hábito. Esto es tu termómetro real
+      mientras el LDL aún no se mueve. Cuanta más verdad pongas en el registro, más útil es.</p>
+    <div id="tabla-adherencia"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>App personal de seguimiento · Datos almacenados localmente en tu navegador · No constituye consejo médico</footer>
+
+<script>
+/* ---------- Estado ---------- */
+const LS = 'diario_cardio_v1';
+let estado = cargar();
+
+function cargar(){
+  try{ return JSON.parse(localStorage.getItem(LS)) || base(); }
+  catch(e){ return base(); }
+}
+function base(){
+  return {
+    datos:{edad:50,peso:54,ct:282,ldl:195,hdl:58,tg:143,
+      pa:'Hipotensión crónica, sin mareos habituales. Menopausia.'},
+    horarios:{desayuno:'08:00', almuerzo:'11:00', comida:'14:00', merienda:'17:30', cena:'20:00', tope:'21:00'},
+    planes:{},   // {fecha:{desayuno,almuerzo,comida,merienda,cena}}
+    seguimiento:{inicio:'', partida:{ct:282,ldl:195,hdl:58,tg:143}},  // fecha de inicio del hábito + cifras de partida
+    registros:[]  // {fecha,desayuno,almuerzo,comida,merienda,cena,agua,mareo,notas,cambios,notacambio}
+  };
+}
+// compatibilidad con estados guardados antes de añadir horarios
+function asegurarHorarios(){
+  if(!estado.horarios) estado.horarios=base().horarios;
+  if(!estado.planes) estado.planes={};
+  if(!estado.seguimiento) estado.seguimiento={inicio:'', partida:{ct:estado.datos.ct,ldl:estado.datos.ldl,hdl:estado.datos.hdl,tg:estado.datos.tg}};
+}
+function persistir(){ localStorage.setItem(LS, JSON.stringify(estado)); }
+
+/* ---------- Navegación ---------- */
+document.querySelectorAll('.tab').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('activo'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('activo'));
+    b.classList.add('activo');
+    document.getElementById(b.dataset.t).classList.add('activo');
+    if(b.dataset.t==='analisis') refrescarSelect();
+  };
+});
+
+/* ---------- Contador de agua ---------- */
+let aguaActual = 0;
+const cont = document.getElementById('vasos');
+for(let i=1;i<=8;i++){
+  const v=document.createElement('div'); v.className='vaso';
+  v.onclick=()=>{ aguaActual = (aguaActual===i)? i-1 : i; pintarAgua(); };
+  cont.appendChild(v);
+}
+function pintarAgua(){
+  [...cont.children].forEach((v,idx)=>v.classList.toggle('lleno', idx<aguaActual));
+  document.getElementById('agua-num').textContent=aguaActual;
+  if(typeof pintarBarraDia==='function') pintarBarraDia();
+}
+
+/* ---------- Diccionario de ingredientes ---------- */
+const FIBRA_SOLUBLE=['avena','cebada','legumbre','lenteja','garbanzo','alubia','judía','judia','frijol',
+  'manzana','pera','cítric','citric','naranja','mandarina','berenjena','okra','psyllium','salvado',
+  'zanahoria','batata','boniato','higo','ciruela'];
+const GRASA_BUENA=['aceite de oliva','aove','oliva','aguacate','nuez','nueces','almendra','avellana',
+  'pistacho','salmón','salmon','sardina','caballa','boquerón','boqueron','atún','atun','anchoa','semilla de lino','chía','chia'];
+const GRASA_MALA=['embutido','chorizo','salchichón','salchichon','bacon','panceta','tocino','mantequilla',
+  'nata','queso curado','bollería','bolleria','fritura','frito','salchicha','hamburguesa','beicon','manteca'];
+
+function detectar(texto, lista){
+  const t=(texto||'').toLowerCase();
+  return lista.filter(p=>t.includes(p));
+}
+
+/* ---------- Guardar registro ---------- */
+function guardarRegistro(){
+  const f=document.getElementById('r-fecha').value;
+  if(!f){ alert('Pon una fecha.'); return; }
+  const reg={
+    fecha:f,
+    desayuno:val('r-desayuno'), almuerzo:val('r-almuerzo'), comida:val('r-comida'),
+    merienda:val('r-merienda'), cena:val('r-cena'),
+    agua:aguaActual, mareo:document.getElementById('r-mareo').checked,
+    notas:val('r-notas'),
+    cambios:document.getElementById('r-cambios').checked,
+    notacambio:val('r-notacambio')
+  };
+  const i=estado.registros.findIndex(r=>r.fecha===f);
+  if(i>=0) estado.registros[i]=reg; else estado.registros.push(reg);
+  estado.registros.sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  persistir(); pintarRegistros(); pintarBarraDia(); if(typeof pintarAdherencia==='function') pintarAdherencia();
+  document.getElementById('r-msg').textContent='Guardado ✓';
+  setTimeout(()=>document.getElementById('r-msg').textContent='',2000);
+}
+const val=id=>document.getElementById(id).value.trim();
+
+function pintarRegistros(){
+  const c=document.getElementById('lista-registros');
+  if(!estado.registros.length){ c.innerHTML='<p class="sub">Aún no hay registros.</p>'; return; }
+  c.innerHTML=estado.registros.map(r=>`
+    <div class="reg-item">
+      <span class="fecha">${r.fecha}</span> ·
+      <small>${r.agua} vasos${r.mareo?' · ⚠ mareo':''}</small>
+      <div style="margin-top:.3rem;font-size:.88rem">
+        ${r.desayuno?'<b>Desayuno:</b> '+r.desayuno+'<br>':''}
+        ${r.comida?'<b>Comida:</b> '+r.comida+'<br>':''}
+        ${r.cena?'<b>Cena:</b> '+r.cena:''}
+      </div>
+      <button class="accion sec" style="margin-top:.6rem;padding:.35rem .8rem;font-size:.82rem"
+        onclick="editarReg('${r.fecha}')">Cargar</button>
+      <button class="accion sec" style="margin-top:.6rem;padding:.35rem .8rem;font-size:.82rem;border-color:var(--terracota);color:var(--terracota)"
+        onclick="borrarReg('${r.fecha}')">Borrar</button>
+    </div>`).join('');
+}
+function editarReg(f){
+  const r=estado.registros.find(x=>x.fecha===f); if(!r) return;
+  document.getElementById('r-fecha').value=r.fecha;
+  ['desayuno','almuerzo','comida','merienda','cena','notas'].forEach(k=>document.getElementById('r-'+k).value=r[k]||'');
+  document.getElementById('r-mareo').checked=r.mareo;
+  document.getElementById('r-cambios').checked=!!r.cambios;
+  document.getElementById('r-notacambio').value=r.notacambio||'';
+  toggleCambios();
+  aguaActual=r.agua; pintarAgua();
+  refrescarAvisoPlan();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function borrarReg(f){
+  if(!confirm('¿Borrar el registro del '+f+'?')) return;
+  estado.registros=estado.registros.filter(x=>x.fecha!==f);
+  persistir(); pintarRegistros();
+}
+
+/* ---------- Análisis ---------- */
+function refrescarSelect(){
+  const s=document.getElementById('sel-analisis');
+  s.innerHTML=estado.registros.map(r=>`<option value="${r.fecha}">${r.fecha}</option>`).join('')
+    || '<option value="">— sin registros —</option>';
+}
+function analizarDia(){
+  const f=document.getElementById('sel-analisis').value;
+  const r=estado.registros.find(x=>x.fecha===f);
+  const out=document.getElementById('resultado-analisis');
+  if(!r){ out.innerHTML='<p class="sub">No hay registro.</p>'; return; }
+  const todo=[r.desayuno,r.almuerzo,r.comida,r.merienda,r.cena].join(' ');
+  const fib=[...new Set(detectar(todo,FIBRA_SOLUBLE))];
+  const buena=[...new Set(detectar(todo,GRASA_BUENA))];
+  const mala=[...new Set(detectar(todo,GRASA_MALA))];
+  const fibOk=fib.length>=2, buenaOk=buena.length>=1;
+  out.innerHTML=`
+    <div class="resultado ${fibOk?'res-ok':'res-bajo'}">
+      <span class="badge ${fibOk?'b-ok':'b-bajo'}">${fibOk?'CUMPLE':'BAJO'}</span>
+      <b>Fibra soluble</b> — detectado: ${fib.length?fib.join(', '):'nada'}.
+      ${fibOk?'Buena cobertura para ayudar a reducir LDL.':'Añade avena, legumbres, manzana o cebada.'}
+      <div class="barra"><i style="width:${Math.min(fib.length/3*100,100)}%"></i></div>
+    </div>
+    <div class="resultado ${buenaOk?'res-ok':'res-bajo'}">
+      <span class="badge ${buenaOk?'b-ok':'b-bajo'}">${buenaOk?'CUMPLE':'BAJO'}</span>
+      <b>Grasas saludables</b> — detectado: ${buena.length?buena.join(', '):'nada'}.
+      ${buenaOk?'Aporte de monoinsaturadas/omega-3 presente.':'Añade AOVE, aguacate, frutos secos o pescado azul.'}
+      <div class="barra"><i style="width:${Math.min(buena.length/2*100,100)}%"></i></div>
+    </div>
+    ${mala.length?`<div class="resultado res-bajo">
+      <span class="badge b-bajo">REVISAR</span>
+      <b>Grasas saturadas a limitar</b> — detectado: ${mala.join(', ')}. Conviene reducirlas.</div>`:''}
+    <p class="sub" style="margin-top:.8rem">Hidratación ese día: ${r.agua}/8 vasos${r.mareo?' · marcaste mareo':''}.</p>`;
+}
+
+/* ---------- Banco de recetas ---------- */
+const RECETAS=[
+  {id:'avena', ing:'Avena', titulo:'Porridge de avena con manzana y nueces', tipo:'Desayuno', tiempo:'10 min',
+   ingredientes:['40 g de copos de avena integrales','200 ml de bebida vegetal sin azúcar o agua','1 manzana con piel rallada','1 puñado de nueces (≈20 g)','Canela'],
+   pasos:['Pon la avena en remojo 5–10 min (o desde la noche anterior) antes de cocinar.','Cuece a fuego medio-bajo 4–5 min removiendo, hasta cremosa.','Retira del fuego, añade la manzana rallada con piel y las nueces al final.','Espolvorea canela; nada de azúcar añadido.'],
+   tecnica:'Remojo + cocción suave. El calor moderado y la hidratación gelifican el betaglucano sin destruirlo.',
+   beneficio:'El betaglucano (fibra soluble) forma un gel en el intestino que atrapa colesterol y sales biliares, ayudando a reducir el LDL. Se conserva mejor con cocción suave que a fuego fuerte o microondas agresivo.'},
+
+  {id:'avena', ing:'Avena', titulo:'Avena overnight con cítricos', tipo:'Desayuno', tiempo:'5 min + reposo',
+   ingredientes:['40 g de avena','120 ml de yogur desnatado natural','Gajos de naranja o mandarina','Semillas de lino molidas'],
+   pasos:['Mezcla avena y yogur en un bote.','Deja en nevera mínimo 6 h (toda la noche).','Al servir añade los cítricos y las semillas de lino recién molidas.'],
+   tecnica:'Hidratación en frío prolongada: activa el betaglucano sin cocción, conservando textura.',
+   beneficio:'Fibra soluble de avena + vitamina C de los cítricos. Moler el lino justo antes libera sus omega-3, que se oxidan si está molido tiempo.'},
+
+  {id:'legumbre', ing:'Legumbres', titulo:'Lentejas estofadas con verduras', tipo:'Comida', tiempo:'40 min',
+   ingredientes:['200 g de lentejas','Cebolla, zanahoria, pimiento, ajo','1 hoja de laurel','AOVE en crudo al final','Comino y pimentón'],
+   pasos:['Sofríe la verdura en poco AOVE a fuego medio.','Añade las lentejas y agua que las cubra; cuece a fuego lento 25–30 min sin sal hasta el final.','Sala al terminar y añade un chorrito de AOVE en crudo al servir.','Sin chorizo ni embutido: usa pimentón y comino para sabor.'],
+   tecnica:'Cocción lenta a fuego bajo y sal al final: mantiene la fibra íntegra y evita que la piel se endurezca.',
+   beneficio:'Fibra soluble + proteína vegetal sin grasa saturada. Sustituir el embutido por especias mantiene el plato cardioprotector. El AOVE en crudo aporta polifenoles intactos.'},
+
+  {id:'legumbre', ing:'Legumbres', titulo:'Garbanzos con espinacas', tipo:'Comida', tiempo:'25 min',
+   ingredientes:['200 g de garbanzos cocidos','Espinacas frescas','Ajo, pimentón','AOVE','Vinagre suave'],
+   pasos:['Saltea el ajo en AOVE a fuego medio (sin quemar).','Añade las espinacas hasta que reduzcan.','Incorpora los garbanzos escurridos y calienta.','Termina con pimentón fuera del fuego y un toque de vinagre.'],
+   tecnica:'Pimentón fuera del fuego (se amarga y pierde propiedades si se quema). Espinaca poco cocinada conserva folato.',
+   beneficio:'Combina fibra soluble (garbanzo) y hierro vegetal; la vitamina C/ácidos del vinagre mejoran la absorción del hierro, útil en menopausia.'},
+
+  {id:'pescado', ing:'Pescado azul', titulo:'Salmón al horno con hierbas', tipo:'Cena', tiempo:'20 min',
+   ingredientes:['1 lomo de salmón','Limón, eneldo o perejil','AOVE','Pimienta'],
+   pasos:['Precalienta el horno a 180 °C.','Coloca el salmón sobre papel, con limón y hierbas.','Hornea 12–15 min: el punto justo es cuando se separa en lascas.','Aliña con AOVE en crudo al sacarlo.'],
+   tecnica:'Horno a temperatura moderada, no frito. El calor suave preserva el omega-3 frente a la fritura, que lo degrada.',
+   beneficio:'Los omega-3 (EPA/DHA) ayudan a bajar triglicéridos y son antiinflamatorios. Hornear en vez de freír evita añadir grasa y proteger el ácido graso del calor extremo.'},
+
+  {id:'pescado', ing:'Pescado azul', titulo:'Sardinas o caballa a la plancha', tipo:'Cena', tiempo:'10 min',
+   ingredientes:['Sardinas o caballa frescas','AOVE','Limón','Ajo y perejil'],
+   pasos:['Plancha bien caliente, unas gotas de AOVE.','Marca el pescado 2–3 min por lado.','Sirve con limón y un majado de ajo y perejil en crudo.'],
+   tecnica:'Plancha breve a fuego vivo: cocción corta que mantiene jugo y omega-3 sin secar el pescado.',
+   beneficio:'Pescado azul pequeño = alta densidad de omega-3 y bajo en contaminantes. El limón aporta vitamina C y realza sabor sin sal.'},
+
+  {id:'aove', ing:'Aceite de oliva', titulo:'AOVE en crudo: aliño base', tipo:'Transversal', tiempo:'2 min',
+   ingredientes:['AOVE virgen extra','Vinagre o limón','Ajo, hierbas frescas'],
+   pasos:['Usa el AOVE preferentemente en crudo sobre el plato ya servido.','Para cocinar, prioriza temperaturas medias; evita humear el aceite.','Guárdalo en lugar oscuro y cerrado: la luz oxida los polifenoles.'],
+   tecnica:'En crudo siempre que se pueda. Al freír a alta temperatura se pierden polifenoles y vitamina E.',
+   beneficio:'Los polifenoles del AOVE tienen efecto antioxidante y ayudan a proteger el LDL de la oxidación. Las grasas monoinsaturadas mejoran el perfil lipídico frente a mantequilla o aceites refinados.'},
+
+  {id:'aguacate', ing:'Aguacate', titulo:'Tostada de aguacate y tomate', tipo:'Desayuno', tiempo:'5 min',
+   ingredientes:['½ aguacate maduro','Pan integral 100%','Tomate maduro','AOVE, pimienta'],
+   pasos:['Tuesta el pan integral.','Machaca el aguacate con tenedor (no licuar) y un toque de limón para que no se oxide.','Extiende sobre el pan, añade tomate y AOVE.'],
+   tecnica:'Aguacate en crudo y recién abierto. El limón frena la oxidación; consumir pronto evita pérdida de vitaminas.',
+   beneficio:'Grasa monoinsaturada + fibra. El pan integral añade fibra soluble; el conjunto da saciedad sin grasa saturada.'},
+
+  {id:'berenjena', ing:'Berenjena', titulo:'Berenjena al horno especiada', tipo:'Comida', tiempo:'30 min',
+   ingredientes:['Berenjena en rodajas','AOVE','Comino, orégano','Ajo'],
+   pasos:['Corta en rodajas y deja 10 min con sal para que suelte amargor; seca.','Pincela con poco AOVE y hornea a 200 °C unos 20 min.','Evita freírla: la berenjena absorbe mucho aceite si se fríe.'],
+   tecnica:'Al horno, no frita. Frita multiplica las calorías por absorción de aceite; al horno conserva la fibra con mínima grasa.',
+   beneficio:'Fibra soluble y compuestos vegetales. Cocinarla al horno mantiene el beneficio sin la carga de grasa de la fritura.'},
+
+  {id:'cebada', ing:'Cebada', titulo:'Ensalada templada de cebada', tipo:'Comida', tiempo:'40 min',
+   ingredientes:['100 g de cebada perlada','Verduras a dados','AOVE, limón','Hierbas frescas'],
+   pasos:['Enjuaga la cebada y cuécela en agua 30–35 min hasta tierna.','Escurre y mezcla con verdura cruda o asada.','Aliña con AOVE y limón en crudo.'],
+   tecnica:'Cocción en abundante agua; la cebada perlada conserva buena parte del betaglucano.',
+   beneficio:'La cebada es de las fuentes más altas de betaglucano junto con la avena: refuerza el efecto sobre el LDL y da saciedad prolongada.'},
+
+  {id:'fruta', ing:'Fruta con piel', titulo:'Manzana o pera con piel', tipo:'Media mañana / Merienda', tiempo:'2 min',
+   ingredientes:['1 manzana o pera con piel','Opcional: canela'],
+   pasos:['Lava bien la pieza y cómela con piel.','Si te apetece, espolvorea canela; nada de azúcar.','Llévala entera al trabajo: snack práctico sin preparación.'],
+   tecnica:'Con piel y entera, no en zumo. La piel concentra fibra (pectina); en zumo se pierde fibra y se libera el azúcar de golpe.',
+   beneficio:'La pectina es fibra soluble que ayuda a reducir el LDL. Comer la fruta entera da saciedad y evita el pico de azúcar de los zumos.'},
+
+  {id:'fruta', ing:'Fruta con piel', titulo:'Cítricos y frutos rojos', tipo:'Media mañana / Merienda', tiempo:'3 min',
+   ingredientes:['1 naranja o mandarina','Un puñado de frutos rojos (fresas, arándanos)'],
+   pasos:['Pela el cítrico dejando la parte blanca (rica en fibra).','Combina con frutos rojos frescos o congelados.','Cómelo recién preparado para conservar la vitamina C.'],
+   tecnica:'Aprovecha la parte blanca del cítrico, donde está la pectina. Frutos rojos enteros, sin triturar.',
+   beneficio:'Fibra soluble + antioxidantes. Buen snack de media mañana, bajo en calorías y con efecto saciante.'},
+
+  {id:'frutos-secos', ing:'Frutos secos', titulo:'Puñado de frutos secos naturales', tipo:'Media mañana / Merienda', tiempo:'1 min',
+   ingredientes:['≈20–30 g (un puñado): nueces, almendras, avellanas o pistachos','Naturales o tostados sin sal'],
+   pasos:['Mide un puñado pequeño (≈20–30 g): son calóricos, la ración importa.','Elige naturales o tostados SIN sal ni miel ni fritos.','Guarda raciones preparadas en botecitos para no pasarte.'],
+   tecnica:'Naturales o tostados, nunca fritos ni con sal/azúcar añadidos. La ración controlada es clave por su densidad calórica.',
+   beneficio:'Grasa monoinsaturada y poliinsaturada que mejora el perfil lipídico. Son uno de los cuatro pilares del método Portfolio (≈50 g/día repartidos).'},
+
+  {id:'semillas', ing:'Semillas', titulo:'Semillas de lino o chía', tipo:'Media mañana / Merienda', tiempo:'2 min',
+   ingredientes:['1 cucharada de semillas de lino o chía','Sobre yogur, fruta o bebida vegetal'],
+   pasos:['El lino: muélelo justo antes de tomarlo (entero pasa sin digerir).','Añádelo a yogur, fruta o porridge.','La chía puede dejarse en remojo unos minutos hasta gelificar.'],
+   tecnica:'Lino recién molido (entero no se aprovecha y molido tiempo se oxida). Chía puede hidratarse para textura.',
+   beneficio:'Fibra soluble + omega-3 vegetal (ALA). El lino aporta lignanos antioxidantes. Reparte el omega-3 a lo largo del día.'},
+
+  {id:'lacteo', ing:'Lácteo fermentado', titulo:'Kéfir o yogur con fruta', tipo:'Media mañana / Merienda', tiempo:'3 min',
+   ingredientes:['1 vaso de kéfir o yogur natural desnatado','Fruta troceada (manzana, frutos rojos)','Opcional: semillas o avena'],
+   pasos:['Usa kéfir o yogur natural SIN azúcar, mejor desnatado.','Endulza con fruta, no con miel ni azúcar.','Añade una cucharada de avena o semillas para más fibra.'],
+   tecnica:'Desnatado y sin azúcar. Endulzar con fruta en vez de miel evita subir triglicéridos.',
+   beneficio:'Fermentado con proteína y poca grasa saturada. La fruta aporta la fibra; cambiar la miel por fruta cuida tus triglicéridos.'}
+];
+
+// Menú semanal: cada celda es array de segmentos {t:texto} o {t:texto, rec:idReceta}
+const MENU=[
+  ['Lunes',
+    [{t:'Porridge de '},{t:'avena',rec:'avena'},{t:' con manzana y nueces'}],
+    [{t:'Manzana con piel',rec:'fruta'},{t:' + '},{t:'puñado de nueces',rec:'frutos-secos'}],
+    [{t:'Lentejas',rec:'legumbre'},{t:' estofadas con verduras + AOVE'}],
+    [{t:'Crema de calabacín; merluza al horno con ensalada y '},{t:'aguacate',rec:'aguacate'}]],
+  ['Martes',
+    [{t:'Tostada con '},{t:'aguacate',rec:'aguacate'},{t:' y tomate'}],
+    [{t:'Kéfir con fruta',rec:'lacteo'}],
+    [{t:'Garbanzos',rec:'legumbre'},{t:' con espinacas'}],
+    [{t:'Salmón',rec:'pescado'},{t:' al horno; verdura asada con '},{t:'AOVE',rec:'aove'}]],
+  ['Miércoles',
+    [{t:'Yogur desnatado con '},{t:'cebada',rec:'cebada'},{t:' y fruta'}],
+    [{t:'Cítricos y frutos rojos',rec:'fruta'}],
+    [{t:'Ensalada de alubias',rec:'legumbre'},{t:', atún y verduras'}],
+    [{t:'Tortilla francesa con setas; ensalada variada con '},{t:'AOVE',rec:'aove'}]],
+  ['Jueves',
+    [{t:'Overnight de '},{t:'avena',rec:'avena'},{t:' con pera y almendras'}],
+    [{t:'Yogur con '},{t:'semillas de lino',rec:'semillas'}],
+    [{t:'Berenjena',rec:'berenjena'},{t:' al horno con quinoa'}],
+    [{t:'Sardinas',rec:'pescado'},{t:' a la plancha; pisto de verduras'}]],
+  ['Viernes',
+    [{t:'Tostada integral con '},{t:'AOVE',rec:'aove'},{t:' y naranja'}],
+    [{t:'Puñado de almendras',rec:'frutos-secos'}],
+    [{t:'Lentejas',rec:'legumbre'},{t:' con arroz integral'}],
+    [{t:'Caballa',rec:'pescado'},{t:' al horno; ensalada con '},{t:'aguacate',rec:'aguacate'}]],
+  ['Sábado',
+    [{t:'Bol de '},{t:'avena',rec:'avena'},{t:', fruta roja y '},{t:'semillas',rec:'semillas'}],
+    [{t:'Pera con piel',rec:'fruta'}],
+    [{t:'Potaje de garbanzos',rec:'legumbre'},{t:' y acelgas'}],
+    [{t:'Pollo a la plancha (sin piel); verdura salteada con '},{t:'AOVE',rec:'aove'}]],
+  ['Domingo',
+    [{t:'Ensalada templada de '},{t:'cebada',rec:'cebada'}],
+    [{t:'Kéfir con fruta',rec:'lacteo'},{t:' o '},{t:'frutos secos',rec:'frutos-secos'}],
+    [{t:'Ensalada de legumbres',rec:'legumbre'},{t:' y vegetales'}],
+    [{t:'Crema de verduras; '},{t:'berenjena',rec:'berenjena'},{t:' al horno'}]]
+];
+function seg(arr){
+  return arr.map(s=>s.rec?`<span class="enlace-rec" onclick="abrirFicha('${s.rec}')">${s.t}</span>`:s.t).join('');
+}
+function pintarMenu(){
+  const t=document.getElementById('tabla-menu');
+  t.innerHTML='<tr><th>Día</th><th>Desayuno</th><th>Media mañana / Merienda</th><th>Comida</th><th>Cena</th></tr>'+
+    MENU.map(d=>`<tr><td>${d[0]}</td><td>${seg(d[1])}</td><td>${seg(d[2])}</td><td>${seg(d[3])}</td><td>${seg(d[4])}</td></tr>`).join('');
+}
+
+/* ---------- Marco Portfolio ---------- */
+const PORTFOLIO=[
+  {n:'Fibra soluble', obj:'10–25 g/día', d:'Avena, cebada, legumbres, manzana, cítricos, berenjena, psyllium. Forma un gel que arrastra colesterol.'},
+  {n:'Frutos secos', obj:'≈50 g/día', d:'Nueces, almendras, avellanas. Grasa monoinsaturada; sustituyen snacks menos sanos.'},
+  {n:'Proteína vegetal', obj:'≈50 g soja', d:'Soja (tofu, tempeh, bebida de soja) y legumbres en lugar de carne grasa.'},
+  {n:'Esteroles vegetales', obj:'≈2 g/día', d:'En aceites vegetales, frutos secos y alimentos enriquecidos. Bloquean la absorción de colesterol.'}
+];
+function pintarPortfolio(){
+  document.getElementById('portfolio-grid').innerHTML=PORTFOLIO.map(p=>`
+    <div class="pf-card">
+      <h4>${p.n}</h4>
+      <span class="obj">${p.obj}</span>
+      <p>${p.d}</p>
+    </div>`).join('');
+}
+
+/* Banco con filtros */
+let filtroRec='todos';      // por ingrediente
+let filtroMomento='todos';  // por franja del día
+const MOMENTOS=[
+  {k:'todos', et:'Todos'},
+  {k:'Desayuno', et:'Desayuno'},
+  {k:'Media mañana / Merienda', et:'Media mañana / Merienda'},
+  {k:'Comida', et:'Comida'},
+  {k:'Cena', et:'Cena'}
+];
+function pintarFiltros(){
+  const ings=['todos',...new Set(RECETAS.map(r=>r.ing))];
+  document.getElementById('filtros-recetas').innerHTML=
+    `<div class="grupo-filtro"><span class="lbl-filtro">Momento</span>`+
+    MOMENTOS.map(m=>
+      `<button class="chip ${m.k===filtroMomento?'on':''}" onclick="setMomento('${m.k}')">${m.et}</button>`).join('')+
+    `</div>`+
+    `<div class="grupo-filtro"><span class="lbl-filtro">Ingrediente</span>`+
+    ings.map(i=>
+      `<button class="chip ${i===filtroRec?'on':''}" onclick="setFiltro('${i}')">${i==='todos'?'Todos':i}</button>`).join('')+
+    `</div>`;
+}
+function setFiltro(i){ filtroRec=i; pintarFiltros(); pintarBanco(); }
+function setMomento(m){ filtroMomento=m; pintarFiltros(); pintarBanco(); }
+function pintarBanco(){
+  const lista=RECETAS.filter(r=>
+    (filtroRec==='todos'||r.ing===filtroRec) &&
+    (filtroMomento==='todos'||r.tipo===filtroMomento||r.tipo==='Transversal'));
+  const cont=document.getElementById('banco-recetas');
+  if(!lista.length){ cont.innerHTML='<p class="sub">No hay recetas con esos filtros. Prueba otra combinación.</p>'; return; }
+  cont.innerHTML=lista.map((r,i)=>{
+    const idx=RECETAS.indexOf(r);
+    return `<div class="receta-card" onclick="abrirFichaIdx(${idx})">
+      <div class="ing">${r.ing}</div>
+      <h4>${r.titulo}</h4>
+      <div class="meta">${r.tipo} · ${r.tiempo}</div>
+    </div>`;
+  }).join('');
+}
+function abrirFicha(id){ const idx=RECETAS.findIndex(r=>r.id===id); if(idx>=0) abrirFichaIdx(idx); }
+function abrirFichaIdx(idx){
+  const r=RECETAS[idx];
+  document.getElementById('modal-caja').innerHTML=`
+    <button class="cerrar" onclick="cerrarFicha()">×</button>
+    <div class="ing" style="color:var(--terracota);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px">${r.ing} · ${r.tipo} · ${r.tiempo}</div>
+    <h3>${r.titulo}</h3>
+    <div class="ficha-bloque"><div class="tit">Ingredientes</div>
+      <ul>${r.ingredientes.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    <div class="ficha-bloque"><div class="tit">Preparación</div>
+      <ol>${r.pasos.map(x=>`<li>${x}</li>`).join('')}</ol></div>
+    <div class="ficha-bloque"><div class="tit">Técnica clave</div><p>${r.tecnica}</p></div>
+    <div class="beneficio"><b>Por qué así:</b> ${r.beneficio}</div>`;
+  document.getElementById('modal-receta').classList.add('abierto');
+}
+function cerrarFicha(){ document.getElementById('modal-receta').classList.remove('abierto'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') cerrarFicha(); });
+
+/* ---------- Horarios y panel de fase ---------- */
+const ORDEN=[
+  {k:'desayuno', et:'Desayuno'},
+  {k:'almuerzo', et:'Media mañana'},
+  {k:'comida',   et:'Comida'},
+  {k:'merienda', et:'Merienda'},
+  {k:'cena',     et:'Cena'}
+];
+const aMin=hhmm=>{ const [h,m]=hhmm.split(':').map(Number); return h*60+m; };
+const fmtMin=t=>{ const h=Math.floor(t/60), m=t%60; return `${h} h ${m? m+' min':''}`.trim(); };
+
+function pintarHorarios(){
+  asegurarHorarios();
+  ['desayuno','almuerzo','comida','merienda','cena','tope'].forEach(k=>{
+    const el=document.getElementById('h-'+k); if(el) el.value=estado.horarios[k];
+  });
+}
+function guardarHorarios(){
+  asegurarHorarios();
+  ['desayuno','almuerzo','comida','merienda','cena','tope'].forEach(k=>{
+    const el=document.getElementById('h-'+k); if(el && el.value) estado.horarios[k]=el.value;
+  });
+  persistir(); pintarFase();
+  document.getElementById('h-msg').textContent='Guardado ✓';
+  setTimeout(()=>document.getElementById('h-msg').textContent='',2000);
+}
+
+function pintarBarraDia(){
+  const cont=document.getElementById('barra-dia'); if(!cont) return;
+  const f=document.getElementById('r-fecha').value;
+  const hoy=new Date().toISOString().slice(0,10);
+  // lee lo que hay ahora mismo en el formulario (en vivo)
+  const campos={
+    desayuno:val('r-desayuno'), almuerzo:val('r-almuerzo'), comida:val('r-comida'),
+    merienda:val('r-merienda'), cena:val('r-cena')
+  };
+  const etiquetas={desayuno:'Desayuno',almuerzo:'Media mañana',comida:'Comida',merienda:'Merienda',cena:'Cena'};
+  const hechas=Object.keys(campos).filter(k=>campos[k]);
+  const titulo = f===hoy ? 'Cómo voy hoy' : 'Situación del día '+f;
+
+  // chips de comidas
+  const chips=Object.keys(etiquetas).map(k=>{
+    const ok=!!campos[k];
+    return `<div class="bd-chip ${ok?'hecho':''}"><span class="punto"></span>${etiquetas[k]}${ok?' ✓':''}</div>`;
+  }).join('');
+
+  // fibra y grasas buenas sobre lo registrado
+  const todo=Object.values(campos).join(' ');
+  const fib=new Set(detectar(todo,FIBRA_SOLUBLE)).size;
+  const buena=new Set(detectar(todo,GRASA_BUENA)).size;
+  const fibOk=fib>=2, buenaOk=buena>=1;
+
+  let metricas='';
+  if(hechas.length){
+    metricas=`<div class="bd-metricas">
+      <div class="bd-metrica"><div class="v">${hechas.length}/5</div><div class="et">comidas anotadas</div></div>
+      <div class="bd-metrica"><div class="v">${aguaActual}/8</div><div class="et">vasos de agua</div></div>
+      <div class="bd-metrica"><div class="v ${fibOk?'':'bajo'}">${fibOk?'✓':fib}</div><div class="et">fibra soluble${fibOk?'':' (faltan)'}</div></div>
+      <div class="bd-metrica"><div class="v ${buenaOk?'':'bajo'}">${buenaOk?'✓':buena}</div><div class="et">grasas buenas${buenaOk?'':' (faltan)'}</div></div>
+    </div>`;
+  }else{
+    metricas=`<div class="bd-vacio">Aún no has anotado comidas para este día. Empieza abajo y aquí verás tu resumen.</div>`;
+  }
+
+  cont.innerHTML=`<div class="titulo-bd">${titulo}</div>
+    <div class="bd-comidas">${chips}</div>
+    ${metricas}`;
+}
+
+function pintarFase(){
+  asegurarHorarios();
+  const H=estado.horarios;
+  const ahora=new Date();
+  const min=ahora.getHours()*60+ahora.getMinutes();
+  const reloj=ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+
+  // construir lista de comidas con su minuto
+  const comidas=ORDEN.map(o=>({...o, min:aMin(H[o.k])})).sort((a,b)=>a.min-b.min);
+  const tope=aMin(H.tope);
+
+  // franja actual = última comida cuyo horario ya pasó (ventana de 90 min como "es momento de")
+  let actual=null, siguiente=null;
+  for(const c of comidas){
+    if(min>=c.min) actual=c;
+    if(min<c.min && !siguiente) siguiente=c;
+  }
+
+  const panel=document.getElementById('panel-fase');
+  panel.className='panel-fase';
+  let franja, sig='', cuenta='';
+
+  if(!actual){
+    franja='Antes del desayuno';
+    if(siguiente) sig=`Pronto: ${siguiente.et} (${H[siguiente.k]})`;
+  }else{
+    const reciente = (min - actual.min) <= 90;
+    franja = reciente ? `Momento de ${actual.et}` : `Fase: tras ${actual.et}`;
+    if(siguiente) sig=`Siguiente: ${siguiente.et} a las ${H[siguiente.k]} · en ${fmtMin(siguiente.min-min)}`;
+    else sig='Ya has pasado la última comida prevista.';
+  }
+
+  // cuenta atrás a la hora tope de cena
+  if(min < tope){
+    const falta=tope-min;
+    if(falta<=60) panel.classList.add('alerta');
+    cuenta=`<div class="cuenta">Hora tope de cena: <b>${H.tope}</b> · te quedan <b>${fmtMin(falta)}</b>`+
+      (falta<=60?' — conviene cenar ya':'')+`</div>`;
+  }else{
+    panel.classList.add('pasada');
+    cuenta=`<div class="cuenta">Ya pasó tu hora tope de cena (${H.tope}). Si aún no has cenado, que sea algo muy ligero.</div>`;
+  }
+
+  // qué tenías previsto en la franja actual (plan de hoy)
+  let previsto='';
+  const hoy=new Date().toISOString().slice(0,10);
+  const planHoy=estado.planes[hoy];
+  if(planHoy && actual && (min-actual.min)<=90){
+    const txt=planHoy[actual.k];
+    if(txt) previsto=`<div class="previsto">Tenías previsto: ${txt}</div>`;
+  }
+
+  panel.innerHTML=`
+    <span class="reloj">${reloj}</span>
+    <div class="ahora">Tu día</div>
+    <div class="franja">${franja}</div>
+    <div class="sig">${sig}</div>
+    ${previsto}
+    ${cuenta}`;
+}
+
+/* ---------- Planificación ---------- */
+const COMIDAS=[
+  {k:'desayuno', et:'Desayuno'},
+  {k:'almuerzo', et:'Media mañana'},
+  {k:'comida',   et:'Comida'},
+  {k:'merienda', et:'Merienda'},
+  {k:'cena',     et:'Cena'}
+];
+
+// Al cambiar de fecha: si hay registro lo carga; si no, prellena con el plan
+function cambioFecha(){
+  asegurarHorarios();
+  const f=document.getElementById('r-fecha').value;
+  const reg=estado.registros.find(r=>r.fecha===f);
+  if(reg){ editarReg(f); return; }
+  // sin registro: limpiar y traer plan si existe
+  ['desayuno','almuerzo','comida','merienda','cena','notas','notacambio'].forEach(k=>document.getElementById('r-'+k).value='');
+  document.getElementById('r-mareo').checked=false;
+  document.getElementById('r-cambios').checked=false;
+  toggleCambios();
+  aguaActual=0; pintarAgua();
+  const plan=estado.planes[f];
+  if(plan){ COMIDAS.forEach(c=>{ document.getElementById('r-'+c.k).value=plan[c.k]||''; }); }
+  refrescarAvisoPlan(); pintarBarraDia();
+}
+
+function refrescarAvisoPlan(){
+  asegurarHorarios();
+  const f=document.getElementById('r-fecha').value;
+  const plan=estado.planes[f];
+  const aviso=document.getElementById('aviso-plan');
+  const btnComi=document.getElementById('btn-comi-plan');
+  if(plan){
+    aviso.style.display='block';
+    aviso.innerHTML=`<b>Tienes un plan para este día.</b> Los campos vienen de tu planificación: confirma o edita lo que cambie.`;
+    btnComi.style.display='inline-block';
+  }else{
+    aviso.style.display='none';
+    btnComi.style.display='none';
+  }
+}
+
+function toggleCambios(){
+  const on=document.getElementById('r-cambios').checked;
+  document.getElementById('r-notacambio').style.display=on?'block':'none';
+}
+
+// Copia el plan tal cual a los campos de registro
+function comiSegunPlan(){
+  const f=document.getElementById('r-fecha').value;
+  const plan=estado.planes[f]; if(!plan) return;
+  COMIDAS.forEach(c=>{ document.getElementById('r-'+c.k).value=plan[c.k]||''; });
+  document.getElementById('r-cambios').checked=false; toggleCambios();
+  pintarBarraDia();
+  document.getElementById('r-msg').textContent='Plan copiado, revisa y guarda ✓';
+  setTimeout(()=>document.getElementById('r-msg').textContent='',2500);
+}
+
+// Modal para planificar (elegir del banco o escribir)
+function abrirPlanificar(){
+  asegurarHorarios();
+  const f=document.getElementById('r-fecha').value || new Date().toISOString().slice(0,10);
+  const plan=estado.planes[f]||{};
+  // qué tipos de ficha corresponden a cada franja
+  const TIPOS_POR_FRANJA={
+    desayuno:['Desayuno'],
+    almuerzo:['Media mañana / Merienda'],
+    comida:['Comida'],
+    merienda:['Media mañana / Merienda'],
+    cena:['Cena']
+  };
+  // genera el <select> con solo las recetas apropiadas para esa franja (+ Transversal siempre)
+  const optsPara=k=>{
+    const tipos=TIPOS_POR_FRANJA[k]||[];
+    const lista=RECETAS.filter(r=>tipos.includes(r.tipo)||r.tipo==='Transversal');
+    return lista.map(r=>`<option value="${r.titulo}">${r.ing} · ${r.titulo}</option>`).join('');
+  };
+  document.getElementById('modal-plan-caja').innerHTML=`
+    <button class="cerrar" onclick="cerrarPlan()">×</button>
+    <h3>Planificar ${f}</h3>
+    <p class="sub">Cada comida te muestra solo opciones apropiadas para esa franja. También puedes escribir libremente.</p>
+    ${COMIDAS.map(c=>`
+      <div class="plan-campo">
+        <label>${c.et}</label>
+        <select onchange="if(this.value){document.getElementById('plan-${c.k}').value=this.value; this.selectedIndex=0;}">
+          <option value="">— elegir del banco —</option>${optsPara(c.k)}
+        </select>
+        <textarea id="plan-${c.k}" placeholder="Escribe o elige arriba">${plan[c.k]||''}</textarea>
+      </div>`).join('')}
+    <button class="accion" onclick="guardarPlan('${f}')">Guardar plan del día</button>
+    <button class="accion sec" onclick="borrarPlan('${f}')" style="border-color:var(--terracota);color:var(--terracota)">Borrar plan</button>`;
+  document.getElementById('modal-plan').classList.add('abierto');
+}
+function cerrarPlan(){ document.getElementById('modal-plan').classList.remove('abierto'); }
+
+function guardarPlan(f){
+  asegurarHorarios();
+  const plan={};
+  COMIDAS.forEach(c=>{ plan[c.k]=document.getElementById('plan-'+c.k).value.trim(); });
+  const vacio=Object.values(plan).every(v=>!v);
+  if(vacio){ delete estado.planes[f]; } else { estado.planes[f]=plan; }
+  persistir(); cerrarPlan();
+  // si la fecha del registro es la planificada y no hay registro aún, prellenar
+  if(document.getElementById('r-fecha').value===f && !estado.registros.find(r=>r.fecha===f)){
+    COMIDAS.forEach(c=>{ document.getElementById('r-'+c.k).value=plan[c.k]||''; });
+  }
+  refrescarAvisoPlan(); pintarFase();
+  document.getElementById('r-msg').textContent='Plan guardado ✓';
+  setTimeout(()=>document.getElementById('r-msg').textContent='',2500);
+}
+function borrarPlan(f){
+  delete estado.planes[f]; persistir(); cerrarPlan(); refrescarAvisoPlan(); pintarFase();
+}
+
+/* ---------- Mi progreso ---------- */
+function pintarSeguimiento(){
+  asegurarHorarios();
+  const s=estado.seguimiento;
+  const fi=document.getElementById('seg-inicio'); if(fi) fi.value=s.inicio||'';
+  ['ct','ldl','hdl','tg'].forEach(k=>{ const el=document.getElementById('seg-'+k); if(el) el.value=s.partida[k]; });
+  pintarVentanaAnalisis(); pintarAdherencia();
+}
+function guardarInicio(){
+  asegurarHorarios();
+  estado.seguimiento.inicio=document.getElementById('seg-inicio').value;
+  persistir(); pintarVentanaAnalisis();
+  document.getElementById('seg-msg').textContent='Guardado ✓';
+  setTimeout(()=>document.getElementById('seg-msg').textContent='',2000);
+}
+function guardarPartida(){
+  asegurarHorarios();
+  ['ct','ldl','hdl','tg'].forEach(k=>{ estado.seguimiento.partida[k]=document.getElementById('seg-'+k).value; });
+  persistir();
+  document.getElementById('part-msg').textContent='Guardado ✓';
+  setTimeout(()=>document.getElementById('part-msg').textContent='',2000);
+}
+function pintarVentanaAnalisis(){
+  asegurarHorarios();
+  const cont=document.getElementById('ventana-analisis'); if(!cont) return;
+  const inicio=estado.seguimiento.inicio;
+  if(!inicio){ cont.innerHTML='<div class="ventana">Marca tu fecha de inicio para calcular cuándo medir.</div>'; return; }
+  const d0=new Date(inicio+'T00:00:00');
+  const hoy=new Date();
+  const dias=Math.floor((hoy-d0)/86400000);
+  const sem=Math.floor(dias/7);
+  const f=n=>{ const d=new Date(d0); d.setDate(d.getDate()+n*7); return d.toLocaleDateString('es-ES'); };
+  let cls, msg;
+  if(dias<0){ cls=''; msg=`Tu inicio es futuro (${d0.toLocaleDateString('es-ES')}). El reloj empezará entonces.`; }
+  else if(sem<4){ cls='pronto'; msg=`Llevas <b>${dias} días</b> (semana ${sem+1}). Aún es pronto para medir: el LDL no se moverá todavía en sangre. Sigue con el hábito. Ventana recomendada: <b>${f(6)}</b> a <b>${f(8)}</b>.`; }
+  else if(sem<8){ cls='pronto'; msg=`Llevas <b>${dias} días</b> (semana ${sem+1}). Ya empiezan a verse cambios medibles (5-10%). Puedes medir ya, aunque el efecto máximo llega hacia la semana 8 (<b>${f(8)}</b>).`; }
+  else { cls='listo'; msg=`Llevas <b>${dias} días</b> (semana ${sem+1}). Estás en la ventana ideal para el análisis de sangre y compararlo con tus cifras de partida.`; }
+  cont.innerHTML=`<div class="ventana ${cls}">${msg}</div>`;
+}
+
+// semana ISO tipo "2026-S23" para agrupar
+function claveSemana(fechaStr){
+  const d=new Date(fechaStr+'T00:00:00');
+  const j=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const dia=(j.getUTCDay()+6)%7; j.setUTCDate(j.getUTCDate()-dia+3);
+  const j1=new Date(Date.UTC(j.getUTCFullYear(),0,4));
+  const sem=1+Math.round(((j-j1)/86400000-3+((j1.getUTCDay()+6)%7))/7);
+  return j.getUTCFullYear()+'-S'+String(sem).padStart(2,'0');
+}
+function pintarAdherencia(){
+  asegurarHorarios();
+  const cont=document.getElementById('tabla-adherencia'); if(!cont) return;
+  if(!estado.registros.length){ cont.innerHTML='<p class="bd-vacio">Aún no hay registros. A medida que registres días, aquí verás tu constancia por semana.</p>'; return; }
+  // agrupar por semana
+  const grupos={};
+  estado.registros.forEach(r=>{ const k=claveSemana(r.fecha); (grupos[k]=grupos[k]||[]).push(r); });
+  const tope=aMin(estado.horarios.tope);
+  const claves=Object.keys(grupos).sort().reverse();
+  cont.innerHTML=claves.map(k=>{
+    const regs=grupos[k]; const n=regs.length;
+    let fib=0,gra=0,agua=0,comidas=0;
+    regs.forEach(r=>{
+      const todo=[r.desayuno,r.almuerzo,r.comida,r.merienda,r.cena].join(' ');
+      if(new Set(detectar(todo,FIBRA_SOLUBLE)).size>=2) fib++;
+      if(new Set(detectar(todo,GRASA_BUENA)).size>=1) gra++;
+      if((+r.agua||0)>=8) agua++;
+      const c=['desayuno','almuerzo','comida','merienda','cena'].filter(x=>r[x]).length;
+      if(c>=4) comidas++;
+    });
+    const pct=x=>Math.round(x/n*100);
+    const fila=(et,v)=>`<div class="ad-fila"><span class="et">${et}</span>
+      <div class="ad-bar"><i style="width:${pct(v)}%"></i></div><span class="pct">${pct(v)}%</span></div>`;
+    return `<div class="ad-semana">
+      <div class="cab"><span>Semana ${k.split('-S')[1]} · ${k.split('-S')[0]}</span><small>${n} día${n>1?'s':''} registrado${n>1?'s':''}</small></div>
+      ${fila('Fibra soluble', fib)}
+      ${fila('Grasas buenas', gra)}
+      ${fila('Agua (8 vasos)', agua)}
+      ${fila('Comidas completas', comidas)}
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Datos ---------- */
+function pintarDatos(){
+  const d=estado.datos;
+  ['edad','peso','ct','ldl','hdl','tg'].forEach(k=>document.getElementById('d-'+k).textContent=d[k]);
+  ['edad','peso','ct','ldl','hdl','tg'].forEach(k=>document.getElementById('e-'+k).value=d[k]);
+  document.getElementById('e-pa').value=d.pa;
+}
+function guardarDatos(){
+  const d=estado.datos;
+  ['edad','peso','ct','ldl','hdl','tg'].forEach(k=>d[k]=document.getElementById('e-'+k).value);
+  d.pa=document.getElementById('e-pa').value;
+  persistir(); pintarDatos();
+  document.getElementById('d-msg').textContent='Guardado ✓';
+  setTimeout(()=>document.getElementById('d-msg').textContent='',2000);
+}
+
+/* ---------- Informe ---------- */
+function generarInforme(){
+  const desde=document.getElementById('inf-desde').value || '0000';
+  const hasta=document.getElementById('inf-hasta').value || '9999';
+  const regs=estado.registros.filter(r=>r.fecha>=desde && r.fecha<=hasta)
+    .sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const d=estado.datos;
+  const dias=regs.length;
+  const aguaMedia=dias? (regs.reduce((s,r)=>s+(+r.agua||0),0)/dias).toFixed(1):'—';
+  const mareos=regs.filter(r=>r.mareo).length;
+  let cumpleFib=0, cumpleGra=0;
+  regs.forEach(r=>{
+    const todo=[r.desayuno,r.almuerzo,r.comida,r.merienda,r.cena].join(' ');
+    if(new Set(detectar(todo,FIBRA_SOLUBLE)).size>=2) cumpleFib++;
+    if(new Set(detectar(todo,GRASA_BUENA)).size>=1) cumpleGra++;
+  });
+  const ln='─'.repeat(54);
+  let txt=
+`INFORME DE SEGUIMIENTO · UNIDAD DE LÍPIDOS
+${ln}
+Generado: ${new Date().toLocaleDateString('es-ES')}
+Periodo analizado: ${desde==='0000'?'inicio':desde} → ${hasta==='9999'?'hoy':hasta}
+
+DATOS DE PARTIDA
+${ln}
+Edad: ${d.edad} años   Peso: ${d.peso} kg
+Contexto: ${d.pa}
+
+Perfil lipídico de referencia:
+  Colesterol total .... ${d.ct} mg/dL
+  LDL (objetivo: bajar) ${d.ldl} mg/dL
+  HDL ................. ${d.hdl} mg/dL
+  Triglicéridos ....... ${d.tg} mg/dL
+
+ADHERENCIA A DIETA CARDIOPROTECTORA (autoregistro)
+${ln}
+Días registrados: ${dias}
+Días con fibra soluble suficiente (≥2 fuentes): ${cumpleFib}/${dias}
+Días con grasas saludables presentes: ${cumpleGra}/${dias}
+
+HIDRATACIÓN Y TENSIÓN (relevante por hipotensión)
+${ln}
+Media de vasos de agua/día: ${aguaMedia}
+Días con mareo al levantarse: ${mareos}/${dias}
+
+DETALLE POR DÍA
+${ln}
+`;
+  if(!dias) txt+='(sin registros en el periodo)\n';
+  regs.forEach(r=>{
+    txt+=`\n${r.fecha}  |  Agua ${r.agua}/8${r.mareo?'  |  ⚠ MAREO':''}\n`;
+    if(r.desayuno) txt+=`  Desayuno: ${r.desayuno}\n`;
+    if(r.almuerzo) txt+=`  Almuerzo: ${r.almuerzo}\n`;
+    if(r.comida)   txt+=`  Comida:   ${r.comida}\n`;
+    if(r.merienda) txt+=`  Merienda: ${r.merienda}\n`;
+    if(r.cena)     txt+=`  Cena:     ${r.cena}\n`;
+    if(r.notas)    txt+=`  Notas:    ${r.notas}\n`;
+  });
+  txt+=`\n${ln}\nNota: registro elaborado por la paciente como apoyo a la consulta. No sustituye valoración clínica.\n`;
+  document.getElementById('informe').textContent=txt;
+}
+
+/* ---------- Respaldo ---------- */
+function exportar(){
+  const blob=new Blob([JSON.stringify(estado,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='diario-cardio-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+function importar(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const fr=new FileReader();
+  fr.onload=()=>{ try{ estado=JSON.parse(fr.result); persistir(); init();
+    alert('Importado correctamente.'); }catch(e){ alert('Archivo no válido.'); } };
+  fr.readAsText(f);
+}
+function borrarTodo(){
+  if(!confirm('¿Borrar TODOS los registros y datos? No se puede deshacer.')) return;
+  estado=base(); persistir(); init();
+}
+
+/* ---------- Init ---------- */
+function init(){
+  document.getElementById('r-fecha').value=new Date().toISOString().slice(0,10);
+  asegurarHorarios();
+  pintarAgua(); pintarRegistros(); pintarMenu(); pintarPortfolio(); pintarFiltros(); pintarBanco();
+  pintarDatos(); pintarHorarios(); pintarFase(); pintarBarraDia(); pintarSeguimiento(); refrescarAvisoPlan(); refrescarSelect();
+}
+init();
+// actualizar la barra en vivo al escribir en las comidas
+['r-desayuno','r-almuerzo','r-comida','r-merienda','r-cena'].forEach(id=>{
+  const el=document.getElementById(id); if(el) el.addEventListener('input', pintarBarraDia);
+});
+// actualizar el panel de fase cada minuto
+setInterval(pintarFase, 60000);
+</script>
+</body>
+</html>
