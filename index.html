@@ -174,6 +174,18 @@
   .bd-metrica .v.bajo{color:var(--terracota)}
   .bd-metrica .et{font-size:.72rem;color:#7a7568;margin-top:.2rem}
   .bd-vacio{font-size:.88rem;color:#9a9385;font-style:italic}
+  /* consejos de equilibrio */
+  .bd-equilibrio{margin-top:.9rem;display:flex;flex-direction:column;gap:.4rem}
+  .eq-item{display:flex;gap:.5rem;align-items:flex-start;font-size:.86rem;padding:.5rem .7rem;border-radius:8px;line-height:1.35}
+  .eq-ico{font-weight:700;flex-shrink:0}
+  .eq-sugerir{background:#eef0e6;color:#4a5230}
+  .eq-sugerir .eq-ico{color:var(--oliva)}
+  .eq-falta{background:#f6efdc;color:#6b5a32}
+  .eq-falta .eq-ico{color:#b58a1e}
+  .eq-cuidado{background:#f7e6df;color:#8a3f22}
+  .eq-cuidado .eq-ico{color:var(--terracota)}
+  .eq-bien{background:#e6efe2;color:#3d5a32}
+  .eq-bien .eq-ico{color:var(--oliva)}
   /* progreso */
   .ventana{margin-top:1.1rem;padding:1rem 1.1rem;border-radius:10px;border-left:5px solid var(--oliva);background:#eef0e6;font-size:.92rem}
   .ventana.pronto{border-left-color:#E8B84B;background:#f6efdc}
@@ -603,11 +615,19 @@ const GRASA_BUENA=['aceite de oliva','aove','oliva','aguacate','nuez','nueces','
   'pistacho','salmón','salmon','sardina','caballa','boquerón','boqueron','atún','atun','anchoa','semilla de lino','chía','chia'];
 const GRASA_MALA=['embutido','chorizo','salchichón','salchichon','bacon','panceta','tocino','mantequilla',
   'nata','queso curado','bollería','bolleria','fritura','frito','salchicha','hamburguesa','beicon','manteca'];
+// grupos para el análisis de equilibrio del día
+const G_LEGUMBRE=['legumbre','lenteja','garbanzo','alubia','judía','judia','frijol','soja','tofu','tempeh','edamame','hummus'];
+const G_PESCADO_AZUL=['salmón','salmon','sardina','caballa','boquerón','boqueron','atún','atun','anchoa','melva','jurel','trucha'];
+const G_PROTE_MAGRA=['pollo','pavo','huevo','tortilla','merluza','lubina','dorada','bacalao','rape','gambas','marisco','pescado blanco','requesón','requeson','clara'];
+const G_VERDURA=['verdura','ensalada','espinaca','acelga','brócoli','brocoli','calabacín','calabacin','tomate','pimiento','lechuga','espárrago','esparrago','judía verde','judia verde','alcachofa','setas','champiñón','champiñon','crema de','puré de','pure de','pisto','menestra','zanahoria','berenjena'];
+const G_FRUTA=['manzana','pera','naranja','mandarina','plátano','platano','fresa','arándano','arandano','frutos rojos','kiwi','melocotón','melocoton','uva','higo','ciruela','fruta'];
+const G_FRUTOS_SECOS=['nuez','nueces','almendra','avellana','pistacho','anacardo'];
 
 function detectar(texto, lista){
   const t=(texto||'').toLowerCase();
   return lista.filter(p=>t.includes(p));
 }
+const tiene=(texto,lista)=>detectar(texto,lista).length>0;
 
 /* ---------- Guardar registro ---------- */
 function guardarRegistro(){
@@ -782,11 +802,23 @@ const RECETAS=[
    tecnica:'Naturales o tostados, nunca fritos ni con sal/azúcar añadidos. La ración controlada es clave por su densidad calórica.',
    beneficio:'Grasa monoinsaturada y poliinsaturada que mejora el perfil lipídico. Son uno de los cuatro pilares del método Portfolio (≈50 g/día repartidos).'},
 
-  {id:'semillas', ing:'Semillas', titulo:'Semillas de lino o chía', tipo:'Media mañana / Merienda', tiempo:'2 min',
-   ingredientes:['1 cucharada de semillas de lino o chía','Sobre yogur, fruta o bebida vegetal'],
-   pasos:['El lino: muélelo justo antes de tomarlo (entero pasa sin digerir).','Añádelo a yogur, fruta o porridge.','La chía puede dejarse en remojo unos minutos hasta gelificar.'],
-   tecnica:'Lino recién molido (entero no se aprovecha y molido tiempo se oxida). Chía puede hidratarse para textura.',
-   beneficio:'Fibra soluble + omega-3 vegetal (ALA). El lino aporta lignanos antioxidantes. Reparte el omega-3 a lo largo del día.'},
+  {id:'semillas', ing:'Semillas de lino', titulo:'Lino molido sobre yogur o fruta', tipo:'Media mañana / Merienda', tiempo:'2 min',
+   ingredientes:['1 cucharada de semillas de lino','Sobre yogur, fruta, porridge o ensalada','Un vaso de agua'],
+   pasos:['Muele el lino JUSTO antes de tomarlo (entero pasa sin digerir y solo hace de laxante).','Espolvorea sobre yogur, fruta o el porridge.','Si lo dejas molido, guárdalo pocos días en nevera (el omega-3 se oxida).','Acompaña con agua suficiente.'],
+   tecnica:'Recién molido, no entero ni molido hace semanas. Moler abre la semilla y evita que el omega-3 se oxide.',
+   beneficio:'Fibra soluble + omega-3 vegetal (ALA) + lignanos antioxidantes. Entero no se aprovecha nada; molido reciente, todo. Útil para LDL y tránsito.'},
+
+  {id:'semillas', ing:'Semillas de chía', titulo:'Chía hidratada en yogur o agua', tipo:'Media mañana / Merienda', tiempo:'5-10 min reposo',
+   ingredientes:['1 cucharada de semillas de chía','Yogur, bebida vegetal o agua','Opcional: fruta'],
+   pasos:['Mezcla la chía con el líquido y deja reposar unos minutos hasta que forme gel.','No hace falta molerla: el remojo basta para aprovecharla.','Tómala cuando haya gelificado; añade fruta si quieres.'],
+   tecnica:'Hidratada, no espolvoreada en seco. El gel mejora la digestión y retiene agua (útil por la hipotensión).',
+   beneficio:'Fibra soluble + omega-3 + el gel aumenta la hidratación corporal. Buena opción para repartir omega-3 sin moler.'},
+
+  {id:'semillas', ing:'Semillas de sésamo', titulo:'Sésamo tostado o tahini', tipo:'Media mañana / Merienda', tiempo:'3 min',
+   ingredientes:['1 cucharada de sésamo','o 1 cucharadita de tahini (pasta de sésamo)','Sobre ensalada, verdura o tostada'],
+   pasos:['Tuesta ligeramente el sésamo en sartén sin aceite hasta que dore (mejora sabor y digestión).','Espolvorea sobre ensalada, verdura o yogur.','Como tahini: úntalo en tostada integral o añádelo a aliños.'],
+   tecnica:'Tostado o molido/tahini, no crudo entero. Tostar abre la semilla y potencia el sabor.',
+   beneficio:'Calcio, hierro, proteína vegetal y grasa saludable. El calcio es relevante en menopausia. Máximo 2 cucharadas de semillas al día.'},
 
   {id:'lacteo', ing:'Lácteo fermentado', titulo:'Kéfir o yogur con fruta', tipo:'Media mañana / Merienda', tiempo:'3 min',
    ingredientes:['1 vaso de kéfir o yogur natural desnatado','Fruta troceada (manzana, frutos rojos)','Opcional: semillas o avena'],
@@ -979,9 +1011,86 @@ function pintarBarraDia(){
     metricas=`<div class="bd-vacio">Aún no has anotado comidas para este día. Empieza abajo y aquí verás tu resumen.</div>`;
   }
 
+  // consejos de equilibrio (orientativos, en relación a lo que ya hay)
+  const consejos = hechas.length ? consejosEquilibrio(campos) : [];
+  let bloqueEq='';
+  if(consejos.length){
+    bloqueEq=`<div class="bd-equilibrio">${consejos.map(c=>
+      `<div class="eq-item eq-${c.tipo}"><span class="eq-ico">${c.ico}</span>${c.texto}</div>`).join('')}</div>`;
+  }
+
   cont.innerHTML=`<div class="titulo-bd">${titulo}</div>
     <div class="bd-comidas">${chips}</div>
-    ${metricas}`;
+    ${metricas}
+    ${bloqueEq}`;
+}
+
+// Devuelve consejos según el equilibrio del día: qué sobra, qué falta, qué sumar
+function consejosEquilibrio(campos){
+  const todo=Object.values(campos).join(' ');
+  const out=[];
+
+  const fib=new Set(detectar(todo,FIBRA_SOLUBLE)).size;
+  const legumbre=tiene(todo,G_LEGUMBRE);
+  const pescadoAzul=tiene(todo,G_PESCADO_AZUL);
+  const proteMagra=tiene(todo,G_PROTE_MAGRA);
+  const hayProteina = legumbre || pescadoAzul || proteMagra;
+  const verdura=tiene(todo,G_VERDURA);
+  const fruta=tiene(todo,G_FRUTA);
+  const frutosSecos=tiene(todo,G_FRUTOS_SECOS);
+  const grasaBuena=tiene(todo,GRASA_BUENA);
+  const grasaMala=detectar(todo,GRASA_MALA);
+
+  // comidas principales incompletas (solo aliño / muy escasas) — se evalúa cada plato por sí mismo
+  const flojas=[];
+  [['comida','La comida'],['cena','La cena']].forEach(([k,et])=>{
+    const t=(campos[k]||'').toLowerCase();
+    if(!t) return;
+    const soloGrasa = tiene(t,GRASA_BUENA) && !tiene(t,G_LEGUMBRE) && !tiene(t,G_PESCADO_AZUL)
+      && !tiene(t,G_PROTE_MAGRA) && !tiene(t,G_VERDURA);
+    if(soloGrasa) flojas.push(et);
+  });
+
+  // 1. Fibra alta -> orientar a equilibrar con proteína/verdura
+  if(fib>=3 && !hayProteina){
+    out.push({tipo:'sugerir',ico:'→',texto:'Vas sobrada de fibra. Equilibra sumando una proteína: pescado azul, huevo o más legumbre.'});
+  } else if(fib>=3 && !verdura){
+    out.push({tipo:'sugerir',ico:'→',texto:'Mucha fibra de cereal/legumbre; añade verdura o ensalada para completar.'});
+  }
+
+  // 2. Proteína
+  if(!hayProteina){
+    out.push({tipo:'falta',ico:'⚠',texto:'No detecto proteína clara hoy: añade legumbre, pescado, huevo o tofu.'});
+  } else if(legumbre && !pescadoAzul && !proteMagra){
+    out.push({tipo:'sugerir',ico:'→',texto:'Hoy tu proteína es solo vegetal (bien). Valora pescado azul algún día por el omega-3.'});
+  }
+
+  // 3. Verdura
+  if(!verdura){
+    out.push({tipo:'falta',ico:'⚠',texto:'Falta verdura. Suma una ensalada, crema o verdura a la comida o cena.'});
+  }
+
+  // 4. Comidas flojas (solo aliño)
+  flojas.forEach(et=>{
+    out.push({tipo:'falta',ico:'⚠',texto:`${et} parece incompleta (casi solo aliño): añade un plato principal.`});
+  });
+
+  // 5. Grasas buenas
+  if(!grasaBuena){
+    out.push({tipo:'falta',ico:'⚠',texto:'Añade una grasa buena: AOVE en crudo, aguacate, frutos secos o pescado azul.'});
+  }
+
+  // 6. Grasa saturada detectada
+  if(grasaMala.length){
+    out.push({tipo:'cuidado',ico:'!',texto:`A vigilar: ${grasaMala.join(', ')}. Conviene reducir grasa saturada.`});
+  }
+
+  // 7. Si todo está cubierto, refuerzo positivo
+  if(!out.length && hayProteina && verdura && grasaBuena && fib>=2){
+    out.push({tipo:'bien',ico:'✓',texto:'Día bien equilibrado: fibra, proteína, verdura y grasas buenas cubiertas.'});
+  }
+
+  return out;
 }
 
 function pintarFase(){
